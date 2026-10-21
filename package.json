@@ -1,0 +1,15 @@
+{
+  "name": "lab08",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mock catalog and order services for the Lab 08 API gateway",
+  "main": "mock-service.js",
+  "scripts": {
+    "start:catalog": "node mock-service.js catalog 3000",
+    "start:order": "node mock-service.js order 3001",
+    "test:rate-limit": "node test-rate-limit.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

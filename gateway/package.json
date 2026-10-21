@@ -1,0 +1,15 @@
+{
+  "name": "lab08-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API gateway for the catalog and order mock services",
+  "main": "gateway.js",
+  "scripts": {
+    "start": "node gateway.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "http-proxy-middleware": "^3.0.5"
+  }
+}
