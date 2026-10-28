@@ -20,21 +20,25 @@ const requireApiKey = (req, res, next) => {
 };
 
 if (process.env.API_KEY) {
-  app.use('/catalog', requireApiKey);
+  app.use(['/catalog', '/product-service'], requireApiKey);
 }
 
 app.use(createProxyMiddleware({
-  pathFilter: (path) => path === '/catalog' || path.startsWith('/catalog/'),
+  pathFilter: (path) => ['/catalog', '/product-service'].some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+  ),
   target: process.env.CATALOG_URL || 'http://localhost:3000',
   changeOrigin: true,
-  pathRewrite: { '^/catalog': '' },
+  pathRewrite: (path) => path.replace(/^\/(?:catalog|product-service)/, ''),
 }));
 
 app.use(createProxyMiddleware({
-  pathFilter: (path) => path === '/order' || path.startsWith('/order/'),
+  pathFilter: (path) => ['/order', '/order-service'].some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+  ),
   target: process.env.ORDER_URL || 'http://localhost:3001',
   changeOrigin: true,
-  pathRewrite: { '^/order': '' },
+  pathRewrite: (path) => path.replace(/^\/(?:order-service|order)/, ''),
 }));
 
 app.use((req, res) => res.status(404).json({ error: 'Route tidak ditemukan' }));

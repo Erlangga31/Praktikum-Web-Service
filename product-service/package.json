@@ -1,0 +1,14 @@
+{
+  "name": "lab09-product-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Owns product catalog and stock reservations",
+  "main": "product-service.js",
+  "scripts": {
+    "start": "node product-service.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "lab08": "file:.."
+  }
+}

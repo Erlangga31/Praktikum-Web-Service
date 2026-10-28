@@ -1,0 +1,14 @@
+{
+  "name": "lab09-order-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Owns orders and requests stock reservations from product-service",
+  "main": "order-service.js",
+  "scripts": {
+    "start": "node order-service.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "lab08": "file:.."
+  }
+}
