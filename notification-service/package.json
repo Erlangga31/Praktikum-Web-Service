@@ -1,0 +1,14 @@
+{
+  "name": "lab10-notification-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Consumes order.created events from RabbitMQ",
+  "main": "notification-service.js",
+  "scripts": {
+    "start": "node notification-service.js",
+    "start:crash": "node notification-service.js --crash"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.8"
+  }
+}
