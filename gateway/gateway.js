@@ -1,6 +1,7 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { rateLimit } = require('express-rate-limit');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -18,6 +19,95 @@ const requireApiKey = (req, res, next) => {
   }
   next();
 };
+
+const DOC_SOURCES = [
+  {
+    prefix: '/product-service',
+    url: process.env.PRODUCT_DOC_URL || 'http://localhost:3000/openapi.json',
+  },
+  {
+    prefix: '/order-service',
+    url: process.env.ORDER_DOC_URL || 'http://localhost:3001/openapi.json',
+  },
+];
+
+async function buildSpec() {
+  const merged = {
+    openapi: '3.0.3',
+    info: { title: 'Toko API (via Gateway)', version: '1.0.0' },
+    servers: [{ url: '/' }],
+    tags: [],
+    paths: {},
+    components: { schemas: {} },
+  };
+  const tags = new Map();
+
+  for (const source of DOC_SOURCES) {
+    try {
+      const response = await fetch(source.url, { signal: AbortSignal.timeout(2000) });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const spec = await response.json();
+
+      for (const tag of spec.tags || []) tags.set(tag.name, tag);
+      for (const [path, operations] of Object.entries(spec.paths || {})) {
+        const prefixedPath = `${source.prefix}${path}`;
+        const prefixedOperations = { ...operations };
+        for (const operation of Object.values(prefixedOperations)) {
+          if (operation && typeof operation === 'object' && operation.responses) {
+            operation.responses['429'] = {
+              description: 'Batas request gateway terlampaui',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                },
+              },
+            };
+            if (process.env.API_KEY && source.prefix === '/product-service') {
+              operation.security = [{ ApiKeyAuth: [] }];
+              operation.responses['401'] = {
+                description: 'API key tidak ada atau tidak valid',
+                content: {
+                  'application/json': {
+                    schema: { $ref: '#/components/schemas/Error' },
+                  },
+                },
+              };
+            }
+          }
+        }
+        merged.paths[prefixedPath] = prefixedOperations;
+      }
+
+      Object.assign(merged.components.schemas, spec.components?.schemas || {});
+    } catch (error) {
+      console.warn(`Dokumentasi gagal diambil dari ${source.url}: ${error.message}`);
+    }
+  }
+
+  merged.tags = [...tags.values()];
+  if (process.env.API_KEY) {
+    merged.components.securitySchemes = {
+      ApiKeyAuth: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'X-API-Key',
+      },
+    };
+  }
+  return merged;
+}
+
+app.get('/openapi.json', async (req, res) => {
+  try {
+    res.json(await buildSpec());
+  } catch (error) {
+    console.error('Gagal menggabungkan dokumentasi OpenAPI:', error.message);
+    res.status(500).json({ error: 'Dokumentasi OpenAPI gagal dibuat' });
+  }
+});
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, {
+  swaggerOptions: { url: '/openapi.json' },
+}));
 
 if (process.env.API_KEY) {
   app.use(['/catalog', '/product-service'], requireApiKey);

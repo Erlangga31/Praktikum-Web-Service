@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "amqplib": "^0.10.8",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
   }
 }

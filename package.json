@@ -13,7 +13,8 @@
     "start:notifications:crash": "npm --prefix notification-service run start:crash",
     "start:gateway": "npm --prefix gateway start",
     "test:rate-limit": "node test-rate-limit.js",
-    "smoke-test": "node smoke-test.js"
+    "smoke-test": "node smoke-test.js",
+    "export:openapi": "node scripts/export-openapi.js"
   },
   "dependencies": {
     "express": "^5.1.0"

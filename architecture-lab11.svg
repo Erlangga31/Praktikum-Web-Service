@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="500" viewBox="0 0 1120 500" role="img" aria-labelledby="title description">
+  <title id="title">Arsitektur service dan dokumentasi API Lab 11</title>
+  <desc id="description">Browser mengakses Swagger UI gabungan melalui gateway. Gateway mengambil OpenAPI dari Product Service dan Order Service, sementara request API diteruskan ke service yang sesuai.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#334155"/>
+    </marker>
+    <style>
+      text { font-family: Segoe UI, Arial, sans-serif; fill: #0f172a; }
+      .box { stroke: #334155; stroke-width: 2; rx: 14; }
+      .title { font-size: 19px; font-weight: 700; }
+      .detail { font-size: 14px; }
+      .edge { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .doc { stroke: #7c3aed; stroke-dasharray: 8 6; }
+      .label { font-size: 14px; fill: #334155; }
+      .doc-label { font-size: 14px; fill: #6d28d9; }
+    </style>
+  </defs>
+  <rect width="1120" height="500" fill="#f8fafc"/>
+  <text x="560" y="46" text-anchor="middle" class="title" font-size="25">Toko Microservices — API Gateway dan OpenAPI</text>
+
+  <rect class="box" x="48" y="185" width="180" height="92" fill="#e2e8f0"/>
+  <text x="138" y="222" text-anchor="middle" class="title">Browser / Klien</text>
+  <text x="138" y="249" text-anchor="middle" class="detail">Swagger UI / API</text>
+
+  <rect class="box" x="350" y="170" width="235" height="122" fill="#dbeafe"/>
+  <text x="467" y="207" text-anchor="middle" class="title">API Gateway :8080</text>
+  <text x="467" y="235" text-anchor="middle" class="detail">/docs · /openapi.json</text>
+  <text x="467" y="261" text-anchor="middle" class="detail">Proxy API + gabung spesifikasi</text>
+
+  <rect class="box" x="785" y="92" width="275" height="126" fill="#dcfce7"/>
+  <text x="922" y="130" text-anchor="middle" class="title">Product Service :3000</text>
+  <text x="922" y="159" text-anchor="middle" class="detail">products dan stock</text>
+  <text x="922" y="188" text-anchor="middle" class="detail">/docs · /openapi.json</text>
+
+  <rect class="box" x="785" y="282" width="275" height="126" fill="#fef3c7"/>
+  <text x="922" y="320" text-anchor="middle" class="title">Order Service :3001</text>
+  <text x="922" y="349" text-anchor="middle" class="detail">orders; publish order.created</text>
+  <text x="922" y="378" text-anchor="middle" class="detail">/docs · /openapi.json</text>
+
+  <path class="edge" d="M228 231 H343"/>
+  <text x="286" y="216" text-anchor="middle" class="label">HTTP</text>
+  <path class="edge" d="M585 204 C660 204 700 155 778 155"/>
+  <text x="683" y="178" text-anchor="middle" class="label">/product-service/*</text>
+  <path class="edge" d="M585 258 C660 258 700 345 778 345"/>
+  <text x="683" y="319" text-anchor="middle" class="label">/order-service/*</text>
+
+  <path class="edge doc" d="M785 110 C710 80 660 118 585 184"/>
+  <text x="686" y="96" text-anchor="middle" class="doc-label">GET /openapi.json</text>
+  <path class="edge doc" d="M785 390 C710 433 660 355 585 278"/>
+  <text x="687" y="420" text-anchor="middle" class="doc-label">GET /openapi.json</text>
+
+  <rect x="49" y="447" width="20" height="4" fill="#334155"/>
+  <text x="79" y="454" class="label">Request API</text>
+  <line x1="220" y1="449" x2="246" y2="449" stroke="#7c3aed" stroke-width="3" stroke-dasharray="7 5"/>
+  <text x="256" y="454" class="doc-label">Pengambilan spesifikasi OpenAPI</text>
+</svg>
