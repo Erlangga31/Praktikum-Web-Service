@@ -180,3 +180,4 @@ app.post('/products/:id/reserve', (req, res) => {
 });
 
 app.listen(port, () => console.log(`product-service berjalan di port ${port}`));
+
