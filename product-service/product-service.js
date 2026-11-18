@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 app.use(express.json());
+require('./observability')(app, 'product-service');
 
 const products = [
   { id: 1, name: 'Keripik Tempe', category: 'Makanan ringan', price: 15000, stock: 10 },
@@ -42,6 +43,22 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(spec));
  *         category: { type: string, example: Makanan ringan }
  *         price: { type: integer, example: 15000 }
  *         stock: { type: integer, example: 10 }
+ *     ServiceHealth:
+ *       type: object
+ *       required: [status, service, uptimeSec]
+ *       properties:
+ *         status: { type: string, example: ok }
+ *         service: { type: string, example: product-service }
+ *         uptimeSec: { type: integer, example: 3600 }
+ *     ServiceMetrics:
+ *       type: object
+ *       required: [service, startedAt, requests, errors5xx, avgMs]
+ *       properties:
+ *         service: { type: string, example: product-service }
+ *         startedAt: { type: string, format: date-time }
+ *         requests: { type: integer, example: 25 }
+ *         errors5xx: { type: integer, example: 1 }
+ *         avgMs: { type: integer, example: 8 }
  *     ReserveRequest:
  *       type: object
  *       required: [qty]
@@ -52,6 +69,26 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(spec));
  *       required: [error]
  *       properties:
  *         error: { type: string, example: Produk tidak ditemukan }
+ * /health:
+ *   get:
+ *     tags: [Products]
+ *     summary: Health check Product Service
+ *     responses:
+ *       200:
+ *         description: Service berjalan
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ServiceHealth' }
+ * /metrics:
+ *   get:
+ *     tags: [Products]
+ *     summary: Metrik dasar Product Service
+ *     responses:
+ *       200:
+ *         description: Metrik request service
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ServiceMetrics' }
  * /products:
  *   get:
  *     tags: [Products]

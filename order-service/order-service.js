@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 app.use(express.json());
+require('./observability')(app, 'order-service');
 
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3000';
 const AMQP_URL = process.env.AMQP_URL || 'amqp://localhost';
@@ -124,6 +125,15 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(spec));
  *       required: [error]
  *       properties:
  *         error: { type: string, example: Stok tidak cukup }
+ *     ServiceMetrics:
+ *       type: object
+ *       required: [service, startedAt, requests, errors5xx, avgMs]
+ *       properties:
+ *         service: { type: string, example: order-service }
+ *         startedAt: { type: string, format: date-time }
+ *         requests: { type: integer, example: 25 }
+ *         errors5xx: { type: integer, example: 1 }
+ *         avgMs: { type: integer, example: 12 }
  *     ServiceHealth:
  *       type: object
  *       required: [service, status]
@@ -140,6 +150,26 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(spec));
  *         content:
  *           application/json:
  *             schema: { $ref: '#/components/schemas/ServiceHealth' }
+ * /health:
+ *   get:
+ *     tags: [Orders]
+ *     summary: Health check Order Service
+ *     responses:
+ *       200:
+ *         description: Service berjalan
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ServiceHealth' }
+ * /metrics:
+ *   get:
+ *     tags: [Orders]
+ *     summary: Metrik dasar Order Service
+ *     responses:
+ *       200:
+ *         description: Metrik request service
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ServiceMetrics' }
  * /orders:
  *   post:
  *     tags: [Orders]
@@ -206,7 +236,10 @@ app.post('/orders', async (req, res) => {
       `${PRODUCT_SERVICE_URL}/products/${productId}/reserve`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Request-Id': req.id,
+        },
         body: JSON.stringify({ qty }),
         signal: AbortSignal.timeout(2000),
       },

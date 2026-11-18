@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('node:crypto');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { rateLimit } = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
@@ -12,6 +13,18 @@ app.use(rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 }));
+
+app.use((req, res, next) => {
+  const suppliedId = req.get('X-Request-Id');
+  const id = suppliedId && /^[A-Za-z0-9._:-]{1,128}$/.test(suppliedId)
+    ? suppliedId
+    : crypto.randomUUID();
+  req.headers['x-request-id'] = id;
+  res.setHeader('X-Request-Id', id);
+  next();
+});
+
+app.get('/health', (req, res) => res.json({ status: 'ok', service: 'gateway' }));
 
 const requireApiKey = (req, res, next) => {
   if (!process.env.API_KEY || req.get('X-API-Key') !== process.env.API_KEY) {

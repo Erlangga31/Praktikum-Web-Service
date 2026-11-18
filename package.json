@@ -12,6 +12,8 @@
     "start:notifications": "npm --prefix notification-service start",
     "start:notifications:crash": "npm --prefix notification-service run start:crash",
     "start:gateway": "npm --prefix gateway start",
+    "test": "node scripts/run-tests.js",
+    "test:api": "node --test tests/api.test.js tests/notification.test.js",
     "test:rate-limit": "node test-rate-limit.js",
     "smoke-test": "node smoke-test.js",
     "export:openapi": "node scripts/export-openapi.js"

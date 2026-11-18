@@ -20,6 +20,66 @@
     }
   ],
   "paths": {
+    "/product-service/health": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Health check Product Service",
+        "responses": {
+          "200": {
+            "description": "Service berjalan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceHealth"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Batas request gateway terlampaui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-service/metrics": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Metrik dasar Product Service",
+        "responses": {
+          "200": {
+            "description": "Metrik request service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceMetrics"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Batas request gateway terlampaui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/product-service/products": {
       "get": {
         "tags": [
@@ -216,6 +276,66 @@
         }
       }
     },
+    "/order-service/health": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Health check Order Service",
+        "responses": {
+          "200": {
+            "description": "Service berjalan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceHealth"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Batas request gateway terlampaui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/order-service/metrics": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Metrik dasar Order Service",
+        "responses": {
+          "200": {
+            "description": "Metrik request service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceMetrics"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Batas request gateway terlampaui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/order-service/orders": {
       "post": {
         "tags": [
@@ -373,6 +493,55 @@
           }
         }
       },
+      "ServiceHealth": {
+        "type": "object",
+        "required": [
+          "service",
+          "status"
+        ],
+        "properties": {
+          "service": {
+            "type": "string",
+            "example": "order-service"
+          },
+          "status": {
+            "type": "string",
+            "example": "ok"
+          }
+        }
+      },
+      "ServiceMetrics": {
+        "type": "object",
+        "required": [
+          "service",
+          "startedAt",
+          "requests",
+          "errors5xx",
+          "avgMs"
+        ],
+        "properties": {
+          "service": {
+            "type": "string",
+            "example": "order-service"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requests": {
+            "type": "integer",
+            "example": 25
+          },
+          "errors5xx": {
+            "type": "integer",
+            "example": 1
+          },
+          "avgMs": {
+            "type": "integer",
+            "example": 12
+          }
+        }
+      },
       "ReserveRequest": {
         "type": "object",
         "required": [
@@ -452,23 +621,6 @@
             "type": "string",
             "format": "date-time",
             "example": "2026-11-11T10:00:00.000Z"
-          }
-        }
-      },
-      "ServiceHealth": {
-        "type": "object",
-        "required": [
-          "service",
-          "status"
-        ],
-        "properties": {
-          "service": {
-            "type": "string",
-            "example": "order-service"
-          },
-          "status": {
-            "type": "string",
-            "example": "ok"
           }
         }
       }
