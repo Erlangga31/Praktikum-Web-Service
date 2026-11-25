@@ -6,6 +6,12 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 app.set('trust proxy', 1);
+const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL
+  || process.env.CATALOG_URL
+  || 'http://localhost:3000';
+const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL
+  || process.env.ORDER_URL
+  || 'http://localhost:3001';
 
 app.use(rateLimit({
   windowMs: 10 * 1000,
@@ -130,7 +136,7 @@ app.use(createProxyMiddleware({
   pathFilter: (path) => ['/catalog', '/product-service'].some(
     (prefix) => path === prefix || path.startsWith(`${prefix}/`),
   ),
-  target: process.env.CATALOG_URL || 'http://localhost:3000',
+  target: PRODUCT_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: (path) => path.replace(/^\/(?:catalog|product-service)/, ''),
 }));
@@ -139,7 +145,7 @@ app.use(createProxyMiddleware({
   pathFilter: (path) => ['/order', '/order-service'].some(
     (prefix) => path === prefix || path.startsWith(`${prefix}/`),
   ),
-  target: process.env.ORDER_URL || 'http://localhost:3001',
+  target: ORDER_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: (path) => path.replace(/^\/(?:order-service|order)/, ''),
 }));
