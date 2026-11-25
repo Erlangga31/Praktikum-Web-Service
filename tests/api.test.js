@@ -97,15 +97,6 @@ for (const [service, path] of [
   });
 }
 
-if (process.env.NOTIFICATION_URL) {
-  test('GET /health mengembalikan status sehat untuk notification-service', async () => {
-    const response = await fetch(`${process.env.NOTIFICATION_URL}/health`);
-    assert.equal(response.status, 200);
-    const health = await response.json();
-    assert.equal(health.status, 'ok');
-  });
-}
-
 test('POST /orders mengembalikan X-Request-Id', async () => {
   const requestId = process.env.CORRELATION_REQUEST_ID || `test-${randomUUID()}`;
   const response = await post(

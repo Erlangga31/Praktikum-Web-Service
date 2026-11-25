@@ -52,7 +52,7 @@ async function waitForHealth(service, url) {
   throw new Error(`${service.name} did not become healthy at ${url}`);
 }
 
-function runApiTests(baseUrl, requestId, notificationUrl) {
+function runApiTests(baseUrl, requestId) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [
       '--test',
@@ -65,7 +65,6 @@ function runApiTests(baseUrl, requestId, notificationUrl) {
         BASE_URL: baseUrl,
         API_KEY: '',
         CORRELATION_REQUEST_ID: requestId,
-        NOTIFICATION_URL: notificationUrl || '',
       },
       stdio: 'inherit',
     });
@@ -147,8 +146,8 @@ async function main() {
     });
     const gateway = startService('gateway', 'gateway/gateway.js', {
       PORT: String(gatewayPort),
-      CATALOG_URL: productUrl,
-      ORDER_URL: orderUrl,
+      PRODUCT_SERVICE_URL: productUrl,
+      ORDER_SERVICE_URL: orderUrl,
       API_KEY: '',
     });
     const notification = notificationPort
@@ -171,7 +170,7 @@ async function main() {
       healthChecks.push(waitForHealth(notification, `${notificationUrl}/health`));
     }
     await Promise.all(healthChecks);
-    await runApiTests(gatewayUrl, correlationId, notificationUrl);
+    await runApiTests(gatewayUrl, correlationId);
     assertCorrelatedLogs(correlationId);
     console.log(`Request ID ${correlationId} ditemukan pada log Order dan Product Service.`);
   } finally {
